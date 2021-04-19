@@ -16,9 +16,19 @@ class PostController extends Controller
      *
      * @return Application|Factory|View|Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //$posts = Post::all();
+        if($request->search)
+        {
+            $posts = Post::join('users','author_id', '=', 'users.id')
+                ->where('title', 'like', '%' .$request->search. '%')
+                ->orWhere('description', 'like', '%' .$request->search. '%')
+                ->orWhere('name', 'like', '%' .$request->search. '%')
+                ->orderBy('posts.created_at', 'desc')
+                ->get();
+            return view('posts.index', compact('posts'));
+        }
         $posts = Post::join('users','author_id', '=', 'users.id')
             ->orderBy('posts.created_at', 'desc')
             ->paginate(4);
