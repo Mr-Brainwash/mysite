@@ -13,6 +13,15 @@ nav {
     background-size: cover;
     background-repeat: no-repeat;
 }
-.card-img, .card-author {
+.card-img, .card-author, .card-date, .card-description {
     margin-bottom: 15px;
+}
+.card-img_max {
+    height: 400px;
+}
+.card-btn {
+    display: flex;
+}
+.card-btn a {
+    margin-right: 10px;
 }
