@@ -5,5 +5,5 @@
     <textarea name="description" class="form-control" rows="8" required>{{$post->description ?? ''}}</textarea>
 </div>
 <div class="form-group">
-    <input name="img" type="file">
+    <input name="img" type="file" class="form-control-file">
 </div>

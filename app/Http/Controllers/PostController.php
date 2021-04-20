@@ -9,7 +9,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-use Psy\Util\Str;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -53,11 +53,11 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $post = new Post();
         $post->title = $request->title;
-        $post->short_title = \Illuminate\Support\Str::length($request->title) > 14 ? \Illuminate\Support\Str::substr($request->title, 0, 14) . '...' : $request->title;
+        $post->short_title = Str::length($request->title) > 25 ? Str::substr($request->title, 0, 25) . '...' : $request->title;
         $post->description = $request->description;
         $post->author_id = rand(1,4);
         if($request->file('img'))
@@ -73,10 +73,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Application|Factory|View|Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         $post = Post::join('users','author_id', '=', 'users.id')->find($id);
         return view('posts.show', compact('post'));
@@ -85,10 +85,10 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Application|Factory|View|Response
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         $post = Post::find($id);
         return view('posts.edit', compact('post'));
@@ -98,14 +98,14 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $post = Post::find($id);
         $post->title = $request->title;
-        $post->short_title = \Illuminate\Support\Str::length($request->title) > 14 ? \Illuminate\Support\Str::substr($request->title, 0, 14) . '...' : $request->title;
+        $post->short_title = Str::length($request->title) > 25 ? Str::substr($request->title, 0, 25) . '...' : $request->title;
         $post->description = $request->description;
         $post->author_id = rand(1,4);
         if($request->file('img'))
@@ -122,10 +122,10 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): \Illuminate\Http\RedirectResponse
     {
         $post = Post::find($id);
         $post->delete();
