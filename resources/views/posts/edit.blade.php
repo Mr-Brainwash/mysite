@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.layout', ['title' => 'Редактировать статью'])
 @section('content')
     <form action="{{route('post.update', ['id' => $post->post_id])}}" method="post">
         @csrf

@@ -1,4 +1,4 @@
- @extends('layouts.layout')
+ @extends('layouts.layout', ['title' => 'Главная'])
  @section('content')
     @if(isset($_GET['search']))
         @if(count($posts)>0)
