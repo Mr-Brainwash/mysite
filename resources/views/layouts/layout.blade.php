@@ -6,20 +6,30 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{$title}}</title>
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
     <link rel="shortcut icon" href="{{'img/favicon.png'}}">
-    <script src="{{asset('js/jquery-3.6.0.js')}}"></script>
-    <script src="{{asset('js/bootstrap.min.js')}}"></script>
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
 
     <div class="container collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="col-6 navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Главная<span class="sr-only">(current)</span></a>
-            </li>
+            <a class="navbar-brand" href="{{ url('/') }}">
+                {{ config('app.name', 'My blog') }}
+            </a>
+{{--            <li class="nav-item active">--}}
+{{--                <a class="navbar-brand" href="/">Главная<span class="sr-only">(current)</span></a>--}}
+{{--            </li>--}}
             <li class="nav-item active offset-3">
                 <a class="nav-link" href="{{route('post.create')}}">Создать статью<span class="sr-only">(current)</span></a>
             </li>
@@ -28,6 +38,40 @@
             <input class="form-control mr-sm-2" type="search" name="search" placeholder="Найти статью...">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
         </form>
+        <ul class="navbar-nav ml-auto">
+            <!-- Authentication Links -->
+            @guest
+                @if (Route::has('login'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Вход') }}</a>
+                    </li>
+                @endif
+
+                @if (Route::has('register'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Регистрация') }}</a>
+                    </li>
+                @endif
+            @else
+                <li class="nav-item dropdown">
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        {{ Auth::user()->name }}
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                           onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                            {{ __('Logout') }}
+                        </a>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </div>
+                </li>
+            @endguest
+        </ul>
     </div>
 </nav>
 <div class="container">
