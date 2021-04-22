@@ -9,11 +9,17 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->except('index', 'show');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -60,7 +66,7 @@ class PostController extends Controller
         $post->title = $request->title;
         $post->short_title = Str::length($request->title) > 25 ? Str::substr($request->title, 0, 25) . '...' : $request->title;
         $post->description = $request->description;
-        $post->author_id = rand(1,4);
+        $post->author_id = Auth::user()->id;
         if($request->file('img'))
         {
             $path = Storage::putFile('public', $request->file('img'));
@@ -75,11 +81,15 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return Application|Factory|View|Response
+     * @return Application|Factory|View|\Illuminate\Http\RedirectResponse
      */
     public function show(int $id)
     {
         $post = Post::join('users','author_id', '=', 'users.id')->find($id);
+        if (!$post)
+        {
+            return redirect()->route('post.index')->withErrors('Статья не найдена');
+        }
         return view('posts.show', compact('post'));
     }
 
@@ -87,11 +97,15 @@ class PostController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return Application|Factory|View|Response
+     * @return Application|Factory|View|\Illuminate\Http\RedirectResponse
      */
     public function edit(int $id)
     {
         $post = Post::find($id);
+        if ($post->author_id != Auth::user()->id)
+        {
+            return redirect()->route('post.index')->withErrors('Вы не можете редактирвать данную статью');
+        }
         return view('posts.edit', compact('post'));
     }
 
@@ -105,6 +119,10 @@ class PostController extends Controller
     public function update(PostRequest $request, int $id)
     {
         $post = Post::find($id);
+        if ($post->author_id != Auth::user()->id)
+        {
+            return redirect()->route('post.index')->withErrors('Вы не можете редактирвать данную статью');
+        }
         $post->title = $request->title;
         $post->short_title = Str::length($request->title) > 25 ? Str::substr($request->title, 0, 25) . '...' : $request->title;
         $post->description = $request->description;
@@ -129,6 +147,10 @@ class PostController extends Controller
     public function destroy(int $id): \Illuminate\Http\RedirectResponse
     {
         $post = Post::find($id);
+        if ($post->author_id != Auth::user()->id)
+        {
+            return redirect()->route('post.index')->withErrors('Вы не можете удалить данную статью');
+        }
         $post->delete();
         return redirect()->route('post.index')->with('success', 'Статья успешно удалена');
     }
